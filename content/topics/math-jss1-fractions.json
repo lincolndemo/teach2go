@@ -1,0 +1,97 @@
+{
+  "subject": "MTH",
+  "class_level": "JSS1",
+  "title": "Fractions",
+  "sequence": 4,
+  "objectives": [
+    "Define a fraction as part of a whole",
+    "Identify numerator and denominator",
+    "Distinguish proper fractions, improper fractions, and mixed numbers",
+    "Convert between improper fractions and mixed numbers"
+  ],
+  "segments": [
+    {
+      "sequence": 1,
+      "title": "What is a Fraction?",
+      "content": {
+        "teaching_outline": "Introduce a fraction as a part of a whole using a shared meat pie. One pie divided equally among 4 friends gives each person 1/4.",
+        "key_terms": ["fraction", "whole", "equal parts"],
+        "examples": [
+          "A meat pie cut into 4 equal parts; one part is 1/4",
+          "A 60-minute lesson; 30 minutes is 1/2 of the lesson"
+        ],
+        "misconceptions": [
+          "Parts must be EQUAL; a pie cut unevenly does not give fair fractions"
+        ],
+        "check_question": {
+          "q": "Ada cuts an orange into 8 equal pieces and eats 3. What fraction did she eat?",
+          "answer": "3/8",
+          "wrong_answer_hints": { "8/3": "Careful! The pieces eaten go on top, the total parts go below." }
+        },
+        "visual_plan": {
+          "prebuilt_assets": ["math-jss1-fractions-pie-01"],
+          "live_animation_example": "Draw circle, split into 8, shade 3, annotate 3/8"
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "title": "Numerator and Denominator",
+      "content": {
+        "teaching_outline": "Name the parts: top number (numerator) counts the parts we have; bottom number (denominator) counts the total equal parts.",
+        "key_terms": ["numerator", "denominator"],
+        "examples": ["In 3/8, numerator is 3 and denominator is 8"],
+        "misconceptions": ["A bigger denominator does not mean a bigger fraction; 1/8 is smaller than 1/4"],
+        "check_question": {
+          "q": "In the fraction 5/12, which number is the denominator?",
+          "answer": "12"
+        },
+        "visual_plan": {
+          "prebuilt_assets": ["math-jss1-fractions-labels-01"],
+          "live_animation_example": "Write 5/12 large, draw arrows labelling numerator and denominator"
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "title": "Types of Fractions",
+      "content": {
+        "teaching_outline": "Proper (numerator smaller, e.g. 2/5), improper (numerator equal or larger, e.g. 7/4), mixed number (whole plus fraction, e.g. 1 3/4). Connect improper and mixed with the same pie picture.",
+        "key_terms": ["proper fraction", "improper fraction", "mixed number"],
+        "examples": ["7/4 of a pie is the same as 1 whole pie and 3/4 of another"],
+        "misconceptions": ["An improper fraction is not a mistake; it is a valid way to write more than one whole"],
+        "check_question": {
+          "q": "Is 9/5 a proper fraction, an improper fraction, or a mixed number?",
+          "answer": "improper fraction"
+        },
+        "visual_plan": {
+          "prebuilt_assets": ["math-jss1-fractions-types-01"],
+          "live_animation_example": "Draw two circles, fill one fully and 3/4 of the second, show 7/4 = 1 3/4"
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "title": "Converting Improper Fractions and Mixed Numbers",
+      "content": {
+        "teaching_outline": "Improper to mixed: divide numerator by denominator; quotient is the whole, remainder is the new numerator. Mixed to improper: whole times denominator plus numerator.",
+        "key_terms": ["convert", "quotient", "remainder"],
+        "examples": ["11/4 -> 11 / 4 = 2 remainder 3 -> 2 3/4", "3 1/2 -> (3 x 2) + 1 = 7 -> 7/2"],
+        "misconceptions": ["Students often forget to keep the SAME denominator after converting"],
+        "check_question": {
+          "q": "Convert 13/5 to a mixed number.",
+          "answer": "2 3/5"
+        },
+        "visual_plan": {
+          "prebuilt_assets": [],
+          "live_animation_example": "Step-by-step long division of 13 by 5 drawn live, then assemble 2 3/5"
+        }
+      }
+    }
+  ],
+  "asset_library": [
+    { "id": "math-jss1-fractions-pie-01", "type": "animation", "description": "A meat pie dividing into equal parts with one part highlighted, configurable parts count" },
+    { "id": "math-jss1-fractions-labels-01", "type": "image", "description": "A large fraction with numerator and denominator labelled with arrows" },
+    { "id": "math-jss1-fractions-types-01", "type": "image", "description": "Three-column chart showing proper, improper, and mixed number examples with pie pictures" }
+  ]
+}
