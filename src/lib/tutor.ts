@@ -98,9 +98,12 @@ export async function* runTurn(
   parser.end();
   while (queue.length > 0) yield queue.shift()!;
 
-  session.history = [...session.history, { role: "user", content: userMsg }, { role: "assistant", content: raw }].slice(
-    -HISTORY_LIMIT,
-  );
+  const newHistory: Msg[] = [
+    ...session.history,
+    { role: "user" as const, content: userMsg },
+    { role: "assistant" as const, content: raw },
+  ];
+  session.history = newHistory.slice(-HISTORY_LIMIT);
 
   yield {
     event: "turn.metrics",
