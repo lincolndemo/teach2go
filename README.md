@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Teach2go — AI Teaching Pipeline Spike
 
-## Getting Started
+Phase 1 spike for the Teach2go MVP (AI tutor for Nigerian JSS students): proves a real-time
+teaching turn — streamed Claude lesson speech plus a live synchronized whiteboard animation —
+within the 3-second latency budget. TTS and avatar vendors are stubbed behind swappable
+interfaces; only a Claude API key is required.
 
-First, run the development server:
+## Run it
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. `npm install`
+2. Put your key in `.env.local`: `ANTHROPIC_API_KEY=sk-ant-...`
+3. `npm run dev` → http://localhost:3000
+4. Click **Start lesson**. Toggle the latency HUD numbers bottom-right.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## What's real vs stubbed
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Piece | Status |
+|---|---|
+| LLM teaching turns (Claude Sonnet, streamed, tagged sections) | Real |
+| Live canvas animations (react-konva, narration-synced) | Real |
+| Check questions, lesson state, latency metrics | Real |
+| Voice | Browser SpeechSynthesis stub (`SpeechEngine` interface → ElevenLabs later) |
+| Avatar | Static persona card (`AvatarPane` → HeyGen stream later) |
+| Prebuilt assets | Placeholder cards showing the chosen asset id |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tests
 
-## Learn More
+`npm test` — Vitest unit tests for the tagged-section parser, directive normalizer,
+scene builder, lesson state/check matching, prompt builder, tutor engine, and SSE decoder.
 
-To learn more about Next.js, take a look at the following resources:
+## Spike go/no-go criteria
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `docs/superpowers/specs/2026-06-10-teach2go-pipeline-spike-design.md` in the parent
+workspace repo (§7).
