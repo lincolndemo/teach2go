@@ -3,6 +3,7 @@
 import { Stage, Layer, Circle, Line, Wedge, Text, Arrow, Group } from "react-konva";
 import { buildScene, stepsVisible, CANVAS_W, CANVAS_H, type Shape } from "@/lib/scene";
 import type { VisualDirective } from "@/lib/types";
+import PrebuiltAssets from "@/components/PrebuiltAssets";
 
 function ShapeView({ shape }: { shape: Shape }) {
   if (shape.kind === "circle") {
@@ -40,13 +41,7 @@ export default function CanvasStage({ directive, progress }: { directive: Visual
   }
 
   if (directive.visual_mode === "prebuilt") {
-    // Asset placeholder card — enough to verify the LLM chooses prebuilt correctly (spec §3.2)
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-2 rounded border-2 border-dashed border-amber-400 bg-amber-50 p-6 text-center">
-        <span className="text-xs font-semibold uppercase tracking-wide text-amber-600">Prebuilt asset</span>
-        <span className="font-mono text-sm text-gray-700">{directive.asset_id}</span>
-      </div>
-    );
+    return <PrebuiltAssets assetId={directive.asset_id} />;
   }
 
   const steps = directive.animation.steps;
