@@ -30,6 +30,7 @@ export default function LearningScreen() {
   const [answerText, setAnswerText] = useState("");
   const [started, setStarted] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const sentences = useRef(new SentenceBuffer());
   const engine = useMemo(
@@ -130,7 +131,7 @@ export default function LearningScreen() {
           <button
             className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
             disabled={!sessionId || busy}
-            onClick={() => { setStarted(true); beginTurn({ type: "advance" }); }}
+            onClick={() => { setStarted(true); setPaused(false); beginTurn({ type: "advance" }); }}
           >
             {started ? "Continue lesson" : "Start lesson"}
           </button>
@@ -141,6 +142,30 @@ export default function LearningScreen() {
           >
             Repeat that
           </button>
+          {speaking && (
+            <>
+              <button
+                className="rounded border border-orange-400 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-700 disabled:opacity-40"
+                onClick={() => { engine.cancel(); setPaused(true); }}
+              >
+                ⏸ Pause
+              </button>
+              <button
+                className="rounded border border-red-400 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 disabled:opacity-40"
+                onClick={() => { engine.cancel(); setPaused(false); setCaptions(""); setProgress(0); setDirective(null); }}
+              >
+                ⏹ Stop
+              </button>
+            </>
+          )}
+          {paused && (
+            <button
+              className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+              onClick={() => { setPaused(false); repeat(); }}
+            >
+              ▶ Resume
+            </button>
+          )}
         </div>
 
         <form
