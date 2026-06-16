@@ -2,10 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import HeyGenAvatar from "@/components/HeyGenAvatar";
+import LiveAvatarVideo from "@/components/LiveAvatarVideo";
 import CaptionsBar from "@/components/CaptionsBar";
 import LatencyHud from "@/components/LatencyHud";
 import { useTurnStream } from "@/hooks/useTurnStream";
+import { useLiveAvatar } from "@/hooks/useLiveAvatar";
 import { BrowserSpeechEngine } from "@/lib/speech";
 import { SentenceBuffer } from "@/lib/sentence-buffer";
 import type { ClientTopic, Persona, VisualDirective } from "@/lib/types";
@@ -33,10 +34,13 @@ export default function LearningScreen() {
   const [paused, setPaused] = useState(false);
 
   const sentences = useRef(new SentenceBuffer());
-  const engine = useMemo(
-    () => new BrowserSpeechEngine({ onProgress: setProgress, onSpeakingChange: setSpeaking }),
+  const speechHandlers = useMemo(
+    () => ({ onProgress: setProgress, onSpeakingChange: setSpeaking }),
     [],
   );
+  const liveAvatar = useLiveAvatar(speechHandlers);
+  const fallbackEngine = useMemo(() => new BrowserSpeechEngine(speechHandlers), [speechHandlers]);
+  const engine = liveAvatar.status === "ready" && liveAvatar.engine ? liveAvatar.engine : fallbackEngine;
 
   useEffect(() => {
     fetch("/api/session", { method: "POST" })
@@ -117,7 +121,13 @@ export default function LearningScreen() {
 
       <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2">
         <div className="min-h-[260px] rounded-lg bg-black overflow-hidden">
-          <HeyGenAvatar persona={persona} speaking={speaking} transcript={captions} />
+          <LiveAvatarVideo
+            persona={persona}
+            speaking={speaking}
+            status={liveAvatar.status}
+            error={liveAvatar.error}
+            attachVideo={liveAvatar.attachVideo}
+          />
         </div>
         <div className="min-h-[260px] rounded-lg border bg-white p-2">
           <CanvasStage directive={directive} progress={effectiveProgress} />
