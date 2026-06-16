@@ -2,7 +2,8 @@
 
 import { useCallback, useRef, useState } from "react";
 import { SSEDecoder, type SSEEvent } from "@/lib/sse-decoder";
-import type { TurnInput } from "@/lib/types";
+import { initialLessonState } from "@/lib/lesson-state";
+import type { LessonState, Msg, TurnInput } from "@/lib/types";
 
 export interface TurnMetrics {
   firstCaptionMs: number | null;
@@ -21,6 +22,8 @@ export function useTurnStream(sessionId: string | null, onEvent: (ev: SSEEvent) 
   const lastTurn = useRef<CachedTurn | null>(null);
   const onEventRef = useRef(onEvent);
   onEventRef.current = onEvent;
+  const lessonState = useRef<LessonState>(initialLessonState());
+  const history = useRef<Msg[]>([]);
 
   const sendTurn = useCallback(
     async (input: TurnInput) => {
@@ -34,7 +37,7 @@ export function useTurnStream(sessionId: string | null, onEvent: (ev: SSEEvent) 
         const res = await fetch("/api/turn", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session_id: sessionId, input }),
+          body: JSON.stringify({ input, lessonState: lessonState.current, history: history.current }),
         });
         if (!res.ok || !res.body) throw new Error(`turn request failed: ${res.status}`);
 
@@ -46,6 +49,12 @@ export function useTurnStream(sessionId: string | null, onEvent: (ev: SSEEvent) 
           const { done, value } = await reader.read();
           if (done) break;
           for (const ev of sse.push(decoder.decode(value, { stream: true }))) {
+            if (ev.event === "session.sync") {
+              const d = ev.data as { lessonState: LessonState; history: Msg[] };
+              lessonState.current = d.lessonState;
+              history.current = d.history;
+              continue;
+            }
             if (ev.event === "teacher.transcript" && m.firstCaptionMs === null) {
               m.firstCaptionMs = Math.round(performance.now() - sentAt);
             }

@@ -36,7 +36,8 @@ export interface TurnEvent {
     | "lesson.state"
     | "check.result"
     | "turn.metrics"
-    | "session.error";
+    | "session.error"
+    | "session.sync";
   data: unknown;
 }
 
