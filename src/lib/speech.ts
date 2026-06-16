@@ -12,14 +12,71 @@ export interface SpeechEngineHandlers {
   onSpeakingChange?: (speaking: boolean) => void;
 }
 
+// Known female-voice names across common TTS engines — browser "Female"/"Woman"
+// labels are rare in practice (Windows/macOS/Android ship named voices instead).
+const FEMALE_VOICE_HINTS = [
+  "female",
+  "woman",
+  "zira",
+  "samantha",
+  "victoria",
+  "allison",
+  "ava",
+  "susan",
+  "karen",
+  "moira",
+  "tessa",
+  "veena",
+  "fiona",
+  "kate",
+  "serena",
+  "joanna",
+  "salli",
+  "kimberly",
+  "amy",
+  "emma",
+  "ivy",
+  "shimmer",
+  "nova",
+  "aria",
+  "jenny",
+  "michelle",
+  "linda",
+  "heera",
+];
+
+function pickFemaleVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
+  const english = voices.filter((v) => v.lang.toLowerCase().startsWith("en"));
+  const pool = english.length > 0 ? english : voices;
+  const byHint = pool.find((v) => FEMALE_VOICE_HINTS.some((hint) => v.name.toLowerCase().includes(hint)));
+  if (byHint) return byHint;
+  return english[0];
+}
+
 export class BrowserSpeechEngine implements SpeechEngine {
   readonly supported: boolean;
   private totalChars = 0;
   private spokenChars = 0;
   private active = 0;
+  private voice: SpeechSynthesisVoice | null = null;
+  private voicesReady = false;
 
   constructor(private handlers: SpeechEngineHandlers = {}) {
     this.supported = typeof window !== "undefined" && "speechSynthesis" in window;
+    if (this.supported) {
+      this.loadVoice();
+      window.speechSynthesis.addEventListener("voiceschanged", () => this.loadVoice());
+    }
+  }
+
+  // Voice list loads asynchronously on most browsers (esp. Windows/Chrome) — an
+  // empty list at construction time means utterances fall back to the system
+  // default voice, which is usually male. Retry via the voiceschanged event.
+  private loadVoice(): void {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) return;
+    this.voice = pickFemaleVoice(voices) ?? null;
+    this.voicesReady = true;
   }
 
   speak(sentence: string): void {
@@ -32,15 +89,9 @@ export class BrowserSpeechEngine implements SpeechEngine {
     u.rate = 1.0;
     u.pitch = 1.2;
 
-    // Use female voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(v => v.name.includes("Female") || v.name.includes("female") || v.name.includes("Woman"));
-    if (femaleVoice) {
-      u.voice = femaleVoice;
-    } else if (voices.length > 0) {
-      // Fallback to first available voice
-      u.voice = voices[0];
-    }
+    if (!this.voicesReady) this.loadVoice();
+    if (this.voice) u.voice = this.voice;
+
     u.onstart = () => this.handlers.onSpeakingChange?.(true);
     u.onboundary = (e) => {
       this.spokenChars = Math.max(this.spokenChars, start + e.charIndex);
