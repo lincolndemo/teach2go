@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import AvatarPane from "@/components/AvatarPane";
+import HeyGenAvatar from "@/components/HeyGenAvatar";
 import CaptionsBar from "@/components/CaptionsBar";
 import LatencyHud from "@/components/LatencyHud";
 import { useTurnStream } from "@/hooks/useTurnStream";
@@ -116,7 +116,9 @@ export default function LearningScreen() {
       </header>
 
       <div className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2">
-        <div className="min-h-[260px]"><AvatarPane persona={persona} speaking={speaking} /></div>
+        <div className="min-h-[260px] rounded-lg bg-black overflow-hidden">
+          <HeyGenAvatar persona={persona} speaking={speaking} transcript={captions} />
+        </div>
         <div className="min-h-[260px] rounded-lg border bg-white p-2">
           <CanvasStage directive={directive} progress={effectiveProgress} />
         </div>
