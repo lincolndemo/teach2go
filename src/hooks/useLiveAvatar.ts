@@ -11,6 +11,7 @@ interface UseLiveAvatarResult {
   status: LiveAvatarStatus;
   error: string | null;
   engine: LiveAvatarSpeechEngine | null;
+  previewImageUrl: string | null;
   attachVideo: (el: HTMLVideoElement | null) => void;
 }
 
@@ -18,6 +19,7 @@ export function useLiveAvatar(handlers: SpeechEngineHandlers): UseLiveAvatarResu
   const [status, setStatus] = useState<LiveAvatarStatus>("connecting");
   const [error, setError] = useState<string | null>(null);
   const [engine, setEngine] = useState<LiveAvatarSpeechEngine | null>(null);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const videoElRef = useRef<HTMLVideoElement | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
 
@@ -89,6 +91,13 @@ export function useLiveAvatar(handlers: SpeechEngineHandlers): UseLiveAvatarResu
 
     void connect();
 
+    fetch("/api/liveavatar/avatar")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d: { preview_url: string | null } | null) => {
+        if (!cancelled && d?.preview_url) setPreviewImageUrl(d.preview_url);
+      })
+      .catch(() => {});
+
     return () => {
       cancelled = true;
       room?.disconnect();
@@ -105,5 +114,5 @@ export function useLiveAvatar(handlers: SpeechEngineHandlers): UseLiveAvatarResu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { status, error, engine, attachVideo };
+  return { status, error, engine, previewImageUrl, attachVideo };
 }

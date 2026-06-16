@@ -126,6 +126,7 @@ export default function LearningScreen() {
             speaking={speaking}
             status={liveAvatar.status}
             error={liveAvatar.error}
+            previewImageUrl={liveAvatar.previewImageUrl}
             attachVideo={liveAvatar.attachVideo}
           />
         </div>
