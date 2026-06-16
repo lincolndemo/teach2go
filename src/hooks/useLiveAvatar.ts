@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LocalAudioTrack, Room, RoomEvent, Track } from "livekit-client";
 import { LiveAvatarSpeechEngine } from "@/lib/liveavatar-speech";
 import type { SpeechEngineHandlers } from "@/lib/speech";
@@ -21,14 +21,14 @@ export function useLiveAvatar(handlers: SpeechEngineHandlers): UseLiveAvatarResu
   const videoElRef = useRef<HTMLVideoElement | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
 
-  const attachVideo = (el: HTMLVideoElement | null) => {
+  const attachVideo = useCallback((el: HTMLVideoElement | null) => {
     videoElRef.current = el;
     if (el) {
       if (!remoteStream.current) remoteStream.current = new MediaStream();
-      el.srcObject = remoteStream.current;
+      if (el.srcObject !== remoteStream.current) el.srcObject = remoteStream.current;
       void el.play().catch(() => {});
     }
-  };
+  }, []);
 
   useEffect(() => {
     let room: Room | null = null;
