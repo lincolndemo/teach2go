@@ -16,7 +16,7 @@ export async function POST(req: Request): Promise<Response> {
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: "tts-1",
-      voice: "nova",
+      voice: "shimmer",
       input: body.text,
       response_format: "mp3",
     }),
