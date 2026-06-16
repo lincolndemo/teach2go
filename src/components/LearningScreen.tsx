@@ -7,6 +7,7 @@ import CaptionsBar from "@/components/CaptionsBar";
 import LatencyHud from "@/components/LatencyHud";
 import { useTurnStream } from "@/hooks/useTurnStream";
 import { useLiveAvatar } from "@/hooks/useLiveAvatar";
+import { useSpeechToText } from "@/hooks/useSpeechToText";
 import { BrowserSpeechEngine } from "@/lib/speech";
 import { SentenceBuffer } from "@/lib/sentence-buffer";
 import type { ClientTopic, Persona, VisualDirective } from "@/lib/types";
@@ -90,6 +91,13 @@ export default function LearningScreen() {
   );
 
   const { sendTurn, repeat, busy, metrics, hasLastTurn } = useTurnStream(sessionId, handleEvent);
+
+  const questionStt = useSpeechToText(
+    useCallback((text) => setQuestionText((q) => (q ? `${q} ${text}` : text)), []),
+  );
+  const answerStt = useSpeechToText(
+    useCallback((text) => setAnswerText((a) => (a ? `${a} ${text}` : text)), []),
+  );
 
   const beginTurn = useCallback(
     (input: Parameters<typeof sendTurn>[0]) => {
@@ -192,6 +200,19 @@ export default function LearningScreen() {
             onChange={(e) => setQuestionText(e.target.value)}
             disabled={!sessionId}
           />
+          {questionStt.supported && (
+            <button
+              type="button"
+              className={`rounded border px-3 py-2 text-sm ${
+                questionStt.listening ? "border-red-400 bg-red-50 text-red-700" : "border-slate-300"
+              }`}
+              disabled={!sessionId}
+              onClick={() => (questionStt.listening ? questionStt.stop() : questionStt.start())}
+              title={questionStt.listening ? "Stop listening" : "Speak your question"}
+            >
+              {questionStt.listening ? "🎙️ Listening…" : "🎤"}
+            </button>
+          )}
           <button className="rounded bg-sky-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40" disabled={busy || !questionText.trim()}>
             Ask ➤
           </button>
@@ -210,6 +231,18 @@ export default function LearningScreen() {
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
               />
+              {answerStt.supported && (
+                <button
+                  type="button"
+                  className={`rounded border px-3 py-2 text-sm ${
+                    answerStt.listening ? "border-red-400 bg-red-50 text-red-700" : "border-amber-300"
+                  }`}
+                  onClick={() => (answerStt.listening ? answerStt.stop() : answerStt.start())}
+                  title={answerStt.listening ? "Stop listening" : "Speak your answer"}
+                >
+                  {answerStt.listening ? "🎙️ Listening…" : "🎤"}
+                </button>
+              )}
               <button className="rounded bg-amber-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-40" disabled={busy || !answerText.trim()}>
                 Answer
               </button>
