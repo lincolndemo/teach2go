@@ -12,7 +12,7 @@ describe("POST /api/session", () => {
     };
     expect(body.session_id).toBeTruthy();
     expect(body.topic.title).toBe("Fractions");
-    expect(body.persona.persona_name).toBe("Mr. Tobi");
+    expect(body.persona.persona_name).toBe("Mrs. Joy");
     expect(body.topic.segments[0].content.check_question.answer).toBeUndefined();
   });
 });

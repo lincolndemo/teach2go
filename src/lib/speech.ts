@@ -30,6 +30,17 @@ export class BrowserSpeechEngine implements SpeechEngine {
 
     const u = new SpeechSynthesisUtterance(sentence);
     u.rate = 1.0;
+    u.pitch = 1.2;
+
+    // Use female voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const femaleVoice = voices.find(v => v.name.includes("Female") || v.name.includes("female") || v.name.includes("Woman"));
+    if (femaleVoice) {
+      u.voice = femaleVoice;
+    } else if (voices.length > 0) {
+      // Fallback to first available voice
+      u.voice = voices[0];
+    }
     u.onstart = () => this.handlers.onSpeakingChange?.(true);
     u.onboundary = (e) => {
       this.spokenChars = Math.max(this.spokenChars, start + e.charIndex);
